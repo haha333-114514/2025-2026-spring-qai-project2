@@ -242,7 +242,7 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=123456, help='Random seed.')
     parser.add_argument('--optimizer', action='store_true', default=False, help='Use SciPy COBYLA instead of Qiskit SPSA.')
     parser.add_argument('--maxiter', type=int, default=500, help='Max iterations.')
-    parser.add_argument('--layers', type=int, default=4, help='The number of QAOA layers.')
+    parser.add_argument('--layers', type=int, default=6, help='The number of QAOA layers.')
     args = parser.parse_args()
 
     budget = args.budget
@@ -261,6 +261,12 @@ if __name__ == '__main__':
     print(f"\n正在从 {file_path} 读取股票收盘价并动态计算均值和协方差...")
     try:
         exp_ret, cov_mat = data_preprocessing(file_path)
+        scale = np.mean(np.abs(exp_ret))
+
+        print(f"\nNormalization scale = {scale:e}")
+
+        exp_ret = exp_ret / scale
+        cov_mat = cov_mat / scale
     except Exception as e:
         print(f"❌ 读取或计算失败，请确保表格路径正确且格式规范。错误原因: {e}")
         exit(1)
